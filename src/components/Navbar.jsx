@@ -1,9 +1,9 @@
-
+import '../css/navbar.css';
 export default function Navbar() {
 
   return (
     <>
-      <div className="nav">BlackJack</div>
+      <div id="nav"></div>
     </>
   )
 }
