@@ -3,7 +3,7 @@ export default function Navbar() {
 
   return (
     <>
-      <div id="nav"></div>
+      <div id="nav">WACKJACK</div>
     </>
   )
 }
