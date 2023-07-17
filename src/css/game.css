@@ -1,0 +1,82 @@
+#navbar{
+    z-index:3;
+}
+
+#game {
+    height: 100vh;
+    display:flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#dealer {
+    width: 1170px;
+    height: 520px;
+    border-radius: 81px;
+    background: #27221E;
+    border-radius: 0px 0px 81px 81px;
+}
+
+#player {
+    position:relative;
+    width: 1170px;
+    height: 520px;
+    border-radius: 81px;
+    background: #27221E;
+    border-radius: 81px 81px 0px 0px;
+}
+
+#player h4{
+    color: #FFF;
+    font-family: SansSerif;
+    font-size: 26px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+    margin:34px;
+}
+
+#dealer h4{
+    margin-top: 0px;
+    color: #FFF;
+    font-family: SansSerif;
+    font-size: 26px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+    margin:34px;
+}
+
+#buttons {
+    
+    display:flex;
+    flex-direction: column;
+    margin-bottom: 74px;
+    margin-right: 70px;
+
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    /* Add padding or other styles to create space between the buttons and the bottom/right edges */
+  }
+
+  button{
+    width: 206px;
+    height: 77px;
+    color: #FFF;
+    background-color: transparent;
+    border: white 3px solid;
+    border-radius: 16px;
+    font-family: Inter;
+    font-size: 36px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+
+  button:nth-child(1){
+    margin-bottom: 48px;
+  }
+
+  
