@@ -79,4 +79,8 @@
     margin-bottom: 48px;
   }
 
+  .blur-effect {
+    filter: blur(40px);
+  }
+
   
