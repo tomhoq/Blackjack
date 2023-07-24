@@ -100,3 +100,11 @@
     font-size:20vh;
     padding:0;  
   }
+
+  .cards_dealer, .cards_player {
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }

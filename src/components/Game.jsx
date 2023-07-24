@@ -7,6 +7,7 @@ import back from "../assets/back.png"
 export default function Game() {
 
   const [deck, setDeck] = useState({});
+  const [deck_id, setDeck_id] = useState("");
   const [cardsPiled, setCardsPiled] = useState([]);
   const [cardsDealer, setCardsDealer] = useState([]);
   const [won, setWon] = useState(false);
@@ -20,16 +21,38 @@ export default function Game() {
 
   /*OneTime creates deck*/
   useEffect(function() {
-    if (!deck.deck_id){
-      fetch("https://www.deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1")
-        .then(res => res.json())
-        .then(data => setDeck(data));
-      setTimeout(()=> {
-        addCardDealer();
-        setTimeout(() => addCardDealer, 440);
-      }, 400);
-    }
+    const fetchDeckAndAddCardDealer = async () => {
+      if (!deck.deck_id) {
+        try {
+          const data = await fetch("https://www.deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1");
+          const json = await data.json();
+          setDeck(json);
+          setTimeout(() => {
+            setDeck_id(json.deck_id);
+          }, 400);
+        } catch (error) {
+          console.error("Error fetching deck:", error);
+        }
+      }
+    };
+    console.log('i fire once');
+    fetchDeckAndAddCardDealer();
   }, []);
+
+  useEffect(() => {
+    if (deck_id) {
+      fetch(`https://www.deckofcardsapi.com/api/deck/${deck_id}/draw/?count=2`)
+        .then(res => res.json())
+        .then(card => {console.log("Pused 2 to dealer")
+          setCardsDealer(card.cards);
+        });
+        fetch(`https://www.deckofcardsapi.com/api/deck/${deck_id}/draw/?count=2`)
+        .then(res => res.json())
+        .then(card => {console.log("Pused 2 to player");
+          setCardsPiled(card.cards);
+        });
+    }
+  },[deck_id]);
 
   /*Counts points every time a card is added to pile deck */
   useEffect(() => {
@@ -51,6 +74,49 @@ export default function Game() {
       }, 2000);
     }
   }, [busted,won,lost,draw]); 
+
+  /*Add card to dealer on stand*/
+  useEffect(() => {
+    console.log("use effe add card dealer")
+
+    if (stand === true && !busted) {
+      console.log("stand true")
+
+      var points = countCards(cardsDealer);
+      var cards = [...cardsDealer];
+
+      if (points < 17) {
+        console.log("points < 17")
+
+        if (deck.deck_id) {
+          fetch(
+            `https://www.deckofcardsapi.com/api/deck/${deck.deck_id}/draw/?count=1`
+          ).then(res => res.json())
+          .then(card => {console.log("Pushing ",card);
+            cards.push(card)
+            setTimeout(() => {
+            setCardsDealer(prev => [...prev, ...card.cards]);}, 600);
+          });
+
+          console.log(cards);
+        }
+
+      } else { 
+        var points_player = countCards(cardsPiled);
+
+        setTimeout(() => 
+        {
+          if (points > 21 || points < points_player) {
+            setWon(true);
+          } else if (points > points_player) {
+            setLost(true);
+          } else if (points === points_player) {
+            setDraw(true);
+          }
+        }, 1500);
+      }
+    };
+  },[stand,cardsDealer]);
   
 
   /*Fetches card from existing deck and pushes it to cardsPiled*/
@@ -61,9 +127,7 @@ export default function Game() {
           fetch(`https://www.deckofcardsapi.com/api/deck/${deck.deck_id}/draw/?count=1`)
             .then(res => res.json())
             .then(card => {    
-              const copy = [...cardsPiled];
-              copy.push(card);
-              setCardsPiled(copy);
+              setCardsPiled(prev => [...prev, ...card.cards]);
               setButtonClicked(false);
             });
         }
@@ -75,9 +139,9 @@ export default function Game() {
     var got_A_11 = false;
     if (cards.length === 0) return 0;
     for (const card of cards) {
-      if (card.cards[0].code[0] === 'Q' || card.cards[0].code[0] === 'K' || card.cards[0].code[0] === 'J' || card.cards[0].code[0] === '0') {
+      if (card.code[0] === 'Q' || card.code[0] === 'K' || card.code[0] === 'J' || card.code[0] === '0') {
         c_points += 10;
-      } else if (card.cards[0].code[0] === 'A') {
+      } else if (card.code[0] === 'A') {
         var add = 0;
         if (points + 11 > 21) add = 1;
         else{
@@ -86,61 +150,18 @@ export default function Game() {
         }
         c_points += add;
       } else {
-        c_points += parseInt(card.cards[0].code[0]);
+        c_points += parseInt(card.code[0]);
       }
     }
     if (got_A_11 && c_points > 21) c_points -= 10;
     return c_points;
   }
-
-
-  function addCardDealer() {
-    console.log("added card to dealer", deck)
-    if (deck.deck_id) {
-      fetch(`https://www.deckofcardsapi.com/api/deck/${deck.deck_id}/draw/?count=1`)
-        .then(res => res.json())
-        .then(card => {    
-          const copy = [...cardsDealer];
-          copy.push(card);
-          setCardsDealer(copy);
-          console.log("cards",cardsDealer);
-        });
-    }
-  }
-
+ 
   async function standPlay() {
     if (stand !== true && !busted) {
-      console.log("stand");
       setStand(true);
-      var points = 0;
-      var cards = [...cardsDealer];
-      while (points < 17) {
-        console.log("stand while, points: ", points, countCards(cards), cards);
-        if (deck.deck_id) {
-          const res = await fetch(
-            `https://www.deckofcardsapi.com/api/deck/${deck.deck_id}/draw/?count=1`
-          );
-          const card = await res.json();
-          cards.push(card); // Assuming card.cards is an array with a single card object
-          points = countCards(cards);
-          console.log("Pushed ",card.cards[0].value, " to ", cards, cardsPiled);
-        }
-      }
-      setCardsDealer(cards);
-      var points_player = countCards(cardsPiled);
-      setTimeout(() => {
-        if (points > 21 ||points < points_player) {
-          setWon(true);
-        } else if (points > points_player) {
-          setLost(true);
-        } else if (points === points_player) {
-          setDraw(true);
-        }
-      }, 1000);
     }
   }
-
-  console.log("d: ",cardsDealer.map(card=> (card.cards[0].value)));
 
   return (
     <>
@@ -168,42 +189,31 @@ export default function Game() {
         <div id="game" style={{ filter: draw||busted||won||lost? 'blur(5px)' : 'none' }}>
           <div id="dealer">
             <h4>Dealer</h4>
-            {cardsDealer.length !== 0 && cardsDealer.map((card, index) => (
-                <img
-                  key={card.cards[0].code}
-                  style={{
-                    position: 'absolute',
-                    top: `${index * 50}px`, // Adjust the value to control the vertical overlapping
-                    left: `${index * 100}px`, // Adjust the value to control the horizontal overlapping
-                    zIndex: index, // Stacking order based on the card index (latest card on top)
-                    margin: index === 0 ? '50px' : '0',
-                  }}
-                  src= {stand===false && index === 0 ? back : card.cards[0].image}
-                  alt={card.cards[0].images.svg}
-                />
-              ))}
+            <div className="cards_dealer">
+              {cardsDealer.length !== 0 && cardsDealer.map((card, index) => (
+                  <img
+                    key={card.code}
+                    src= {stand===false && index === 0 ? back : card.image}
+                    alt={card.images.svg}
+                  />
+                ))}
+            </div>
           </div>
           Points:
           {points}
           cards:
-          {cardsPiled.length !== 0 && cardsPiled.map(card=> (card.cards[0].value))}
+          {cardsPiled.length !== 0 && cardsPiled.map(card=> (card.value))}
           <div id="player">
             <h4>You</h4>
-            
-            {cardsPiled.length !== 0 && cardsPiled.map((card, index) => (
-                <img
-                  key={card.cards[0].code}
-                  style={{
-                    position: 'absolute',
-                    top: `${index * 50}px`, // Adjust the value to control the vertical overlapping
-                    left: `${index * 100}px`, // Adjust the value to control the horizontal overlapping
-                    zIndex: index, // Stacking order based on the card index (latest card on top)
-                    margin: index === 0 ? '50px' : '0',
-                  }}
-                  src={card.cards[0].image}
-                  alt={card.cards[0].images.svg}
-                />
-              ))}
+            <div className="cards_player">
+              {cardsPiled.length !== 0 && cardsPiled.map((card, index) => (
+                  <img
+                    key={card.code}
+                    src={card.image}
+                    alt={card.images.svg}
+                  />
+                ))}
+            </div>
           </div>
         </div>
         <div id="buttons" style={{ filter: busted ? 'blur(5px)' : 'none' }}>
