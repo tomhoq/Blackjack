@@ -22,7 +22,7 @@ export default function Game() {
   /*OneTime creates deck*/
   useEffect(function() {
     const fetchDeckAndAddCardDealer = async () => {
-      if (!deck.deck_id) {
+      if (deck_id === "") {
         try {
           const data = await fetch("https://www.deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1");
           const json = await data.json();
@@ -35,12 +35,14 @@ export default function Game() {
         }
       }
     };
+
     console.log('i fire once');
     fetchDeckAndAddCardDealer();
-  }, []);
+  }, [deck_id]);
 
+  /*Onetime gives starting cards*/
   useEffect(() => {
-    if (deck_id) {
+    if (deck_id !== "") {
       fetch(`https://www.deckofcardsapi.com/api/deck/${deck_id}/draw/?count=2`)
         .then(res => res.json())
         .then(card => {console.log("Pused 2 to dealer")
@@ -54,39 +56,35 @@ export default function Game() {
     }
   },[deck_id]);
 
+
   /*Counts points every time a card is added to pile deck */
   useEffect(() => {
     var c_points = 0;
     c_points = countCards(cardsPiled);
     setPoints(c_points);
   
+    if (c_points === 21) 
+      document.getElementById('hitButton').disabled = true;
+
     if (c_points > 21) {
+      console.log("disabling buttons ",c_points)
+      document.getElementById('standButton').disabled = true;
+      document.getElementById('hitButton').disabled = true;
       setTimeout(() => setBusted(true), 1240); // Corrected syntax of setTimeout
     }
   }, [cardsPiled]);
 
-  /*Game busted */
-  useEffect(() => {
-    if (busted||won||lost||draw) {
-      setTimeout(() => {
-        // Replace '/new-page' with the URL of the page you want to redirect to
-        window.location.reload();
-      }, 2000);
-    }
-  }, [busted,won,lost,draw]); 
 
   /*Add card to dealer on stand*/
   useEffect(() => {
     console.log("use effe add card dealer")
 
     if (stand === true && !busted) {
-      console.log("stand true")
 
       var points = countCards(cardsDealer);
       var cards = [...cardsDealer];
 
       if (points < 17) {
-        console.log("points < 17")
 
         if (deck.deck_id) {
           fetch(
@@ -98,7 +96,6 @@ export default function Game() {
             setCardsDealer(prev => [...prev, ...card.cards]);}, 600);
           });
 
-          console.log(cards);
         }
 
       } else { 
@@ -134,59 +131,97 @@ export default function Game() {
     }
   }
 
+  /*Returns points in hand*/
+ /* console.log("8,8,a,10",countCards([{code:"8S"},{code:"8D"},{code:"AS"}]))*/
   function countCards(cards){
     var c_points = 0;
     var got_A_11 = false;
+
     if (cards.length === 0) return 0;
-    for (const card of cards) {
-      if (card.code[0] === 'Q' || card.code[0] === 'K' || card.code[0] === 'J' || card.code[0] === '0') {
+
+    for (const card of cards) 
+    {
+      if (card.code[0] === 'Q' || card.code[0] === 'K' || card.code[0] === 'J' || card.code[0] === '0') 
+      {
         c_points += 10;
-      } else if (card.code[0] === 'A') {
+      } 
+      else if (card.code[0] === 'A') 
+      {
         var add = 0;
-        if (points + 11 > 21) add = 1;
+        if (c_points + 11 > 21) add = 1;
+
         else{
           got_A_11 = true;
           add = 11;
         }
         c_points += add;
-      } else {
+      } 
+      else 
+      {
         c_points += parseInt(card.code[0]);
       }
+
     }
+
     if (got_A_11 && c_points > 21) c_points -= 10;
+
     return c_points;
   }
  
+  /*toggle stand*/
   async function standPlay() {
-    if (stand !== true && !busted) {
+    if (stand !== true && !busted && !won && !lost && !draw) {
       setStand(true);
+      document.getElementById('standButton').disabled = true;
+      document.getElementById('hitButton').disabled = true;
+
     }
   }
+
+
+  /*Reset variables*/
+  function restartGame() {
+    setDeck({});
+    setDeck_id("");
+    setCardsPiled([]);
+    setCardsDealer([]);
+    setWon(false);
+    setLost(false);
+    setDraw(false);
+    setPoints(0); // State variable for points
+    setButtonClicked(false);
+    setBusted(false);
+    setStand(false);
+  }
+  if (document.getElementById('standButton') && document.getElementById('hitButton'))
+    console.log(document.getElementById('standButton').disabled, document.getElementById('hitButton').disabled)
 
   return (
     <>
         <Navbar />
         {
-          busted && <div className="overlay">
+          busted && <div onClick={draw||busted||won||lost ? restartGame : null}className="overlay">
                       <h1 className="overlay-text">Busted</h1>
                     </div>
         }
         {
-          won && <div className="overlay">
+          won && <div onClick={draw||busted||won||lost ? restartGame : null} className="overlay">
                       <h1 className="overlay-text">Won</h1>
                     </div>
         }
         {
-          lost && <div className="overlay">
+          lost && <div onClick={draw||busted||won||lost ? restartGame : null} className="overlay">
                       <h1 className="overlay-text">Lost</h1>
                     </div>
         }
         {
-          draw && <div className="overlay">
+          draw && <div onClick={draw||busted||won||lost ? restartGame : null} className="overlay">
                       <h1 className="overlay-text">Draw</h1>
                     </div>
         }
-        <div id="game" style={{ filter: draw||busted||won||lost? 'blur(5px)' : 'none' }}>
+        <div id="game" onClick={draw||busted||won||lost ? restartGame : null} 
+                      style={{ filter: draw||busted||won||lost? 'blur(px)' : 'none' }}>
+
           <div id="dealer">
             <h4>Dealer</h4>
             <div className="cards_dealer">
@@ -199,10 +234,14 @@ export default function Game() {
                 ))}
             </div>
           </div>
+
+
           Points:
           {points}
           cards:
           {cardsPiled.length !== 0 && cardsPiled.map(card=> (card.value))}
+
+
           <div id="player">
             <h4>You</h4>
             <div className="cards_player">
@@ -215,11 +254,15 @@ export default function Game() {
                 ))}
             </div>
           </div>
+
         </div>
+        
+        {!draw && !busted && !won && !lost &&
         <div id="buttons" style={{ filter: busted ? 'blur(5px)' : 'none' }}>
-          <button onClick={addCard}>Hit</button>
-          <button onClick={standPlay}>Stand</button>
+          <button id="hitButton" onClick={addCard}>Hit</button>
+          <button id="standButton" onClick={standPlay}>Stand</button>
         </div>
+        }
     </>
   )
 }
