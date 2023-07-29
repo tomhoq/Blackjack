@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useEffect } from 'react'
 import Navbar from './Navbar';
+import Settings from './Settings';
+
 import "../css/game.css"
 import back from "../assets/back.png"
 
@@ -17,7 +19,11 @@ export default function Game() {
   const [buttonClicked, setButtonClicked] = useState(false);
   const [busted, setBusted] = useState(false);
   const [stand, setStand] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
+  function toggleSettings() {
+    setShowSettings(prev => !prev);
+  }
 
   /*OneTime creates deck*/
   useEffect(function() {
@@ -193,12 +199,12 @@ export default function Game() {
     setBusted(false);
     setStand(false);
   }
-  if (document.getElementById('standButton') && document.getElementById('hitButton'))
-    console.log(document.getElementById('standButton').disabled, document.getElementById('hitButton').disabled)
+
 
   return (
     <>
-        <Navbar />
+        <Navbar toggleSettings={toggleSettings}/>
+        {showSettings && <Settings/>}
         {
           busted && <div onClick={draw||busted||won||lost ? restartGame : null}className="overlay">
                       <h1 className="overlay-text">Busted</h1>
@@ -220,7 +226,7 @@ export default function Game() {
                     </div>
         }
         <div id="game" onClick={draw||busted||won||lost ? restartGame : null} 
-                      style={{ filter: draw||busted||won||lost? 'blur(px)' : 'none' }}>
+                      style={{ filter: draw||busted||won||lost? 'blur(3px)' : 'none' }}>
 
           <div id="dealer">
             <h4>Dealer</h4>
