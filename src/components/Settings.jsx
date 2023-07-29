@@ -1,37 +1,44 @@
 import '../css/settings.css';
 
-export default function Settings(){
-
+export default function Settings(props){
+    const {togglePlayerPoints, showPlayerPoints} = props;
+    console.log(showPlayerPoints)
     return (
         <div className="settings">
             <h1>Settings</h1>
-            <label className="switch">
-                <h4>Display player points</h4>
-                <input type="checkbox"/>
-                    <span className="slider round"></span>
-            </label>
-            <label className="switch">
-                <div className="check">
-                    <h4>Display dealer points</h4>
+            <div className="option">
+                <p>Display player’s points:</p>
+                <label className="switch">
+                    <input onChange={togglePlayerPoints} checked={showPlayerPoints} type="checkbox"/>
+                    <span className="slider"></span>
+                </label>
+            </div>
+
+            <div className="option">
+                <p>Display dealer’s points:</p>
+                <label className="switch">
                     <input type="checkbox"/>
-                        <span className="slider round"></span>
-                </div>
-            </label>
-            <label className="switch">
-                <div className="check">
-                    <h4>Restart game automatically</h4>
+                    <span className="slider"></span>
+                </label>
+            </div>
+                
+            <div className="option">
+                <p>Restart Game Automatically:</p>
+                <label className="switch">
                     <input type="checkbox"/>
-                        <span className="slider round"></span>
-                </div>
-            </label>
+                    <span className="slider"></span>
+                </label>
+            </div>
+
             <h2>Appearance</h2>
-            <label className="switch">
-                <h4>Dark mode</h4>
-                <div className="check">
+            <div className="option">
+                <p>Dark mode:</p>
+                <label className="switch">
                     <input type="checkbox"/>
-                        <span className="slider round"></span>
-                </div>
-            </label>
+                    <span className="slider"></span>
+                </label>
+            </div>
+
         </div>
     )
 }

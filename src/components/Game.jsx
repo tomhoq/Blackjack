@@ -21,9 +21,19 @@ export default function Game() {
   const [stand, setStand] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
+  /*Toggle settings*/
+  const [showPlayerPoints, setShowPlayerPoints] = useState(false);
+  const [showDealerPoints, setShowDealerPoints] = useState(false);
+  const [restartGameAutomatically, setRestartGameAutomatically] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
+
   function toggleSettings() {
     setShowSettings(prev => !prev);
   }
+
+  const togglePlayerPoints = (event) => {
+    setShowPlayerPoints(event.target.checked);
+  };
 
   /*OneTime creates deck*/
   useEffect(function() {
@@ -203,8 +213,8 @@ export default function Game() {
 
   return (
     <>
-        <Navbar toggleSettings={toggleSettings}/>
-        {showSettings && <Settings/>}
+        <Navbar toggleSettings={toggleSettings} showPlayerPoints={showPlayerPoints} />
+        {showSettings && <Settings togglePlayerPoints={togglePlayerPoints} />}
         {
           busted && <div onClick={draw||busted||won||lost ? restartGame : null}className="overlay">
                       <h1 className="overlay-text">Busted</h1>
@@ -225,34 +235,35 @@ export default function Game() {
                       <h1 className="overlay-text">Draw</h1>
                     </div>
         }
-        <div id="game" onClick={draw||busted||won||lost ? restartGame : null} 
-                      style={{ filter: draw||busted||won||lost? 'blur(3px)' : 'none' }}>
 
-          <div id="dealer">
-            <h4>Dealer</h4>
+        <div id="game" onClick={draw||busted||won||lost ? restartGame : null} 
+                      style={{ filter: draw||busted||won||lost? 'blur(7px)' : 'none' }}>
+
+          <div className="place">
+            <div className="task">
+              <h4>Dealer</h4>
+            </div>
             <div className="cards_dealer">
               {cardsDealer.length !== 0 && cardsDealer.map((card, index) => (
                   <img
                     key={card.code}
+                    className="card"
                     src= {stand===false && index === 0 ? back : card.image}
                     alt={card.images.svg}
                   />
                 ))}
             </div>
           </div>
-
-
-          Points:
-          {points}
-          cards:
-          {cardsPiled.length !== 0 && cardsPiled.map(card=> (card.value))}
-
-
-          <div id="player">
-            <h4>You</h4>
+          
+          <div className="place">
+            <div className="task">
+              <h4>You</h4>
+              {showPlayerPoints && <h1 id="pointsPlayer">Points: {points}</h1>}
+            </div>
             <div className="cards_player">
               {cardsPiled.length !== 0 && cardsPiled.map((card, index) => (
                   <img
+                    className="card-animate"
                     key={card.code}
                     src={card.image}
                     alt={card.images.svg}

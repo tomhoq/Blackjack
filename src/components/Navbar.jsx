@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 
 export default function Navbar(props) {
-  const { toggleSettings } = props;
+  const {toggleSettings } = props;
 
   return (
     <div id = "navbar">

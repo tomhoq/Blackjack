@@ -3,73 +3,81 @@
 }
 
 #game {
-    height: 100vh;
     display:flex;
     flex-direction: column;
-    justify-content: space-between;
     align-items: center;
 }
 
-#dealer {
-    width: 1170px;
-    height: 520px;
-    border-radius: 81px;
-    background: #27221E;
-    border-radius: 0px 0px 81px 81px;
+.place {
+    width: 70vw;
+    height: 45vh;
+    min-height: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-#player {
-    position:relative;
-    width: 1170px;
-    height: 520px;
-    border-radius: 81px;
-    background: #27221E;
-    border-radius: 81px 81px 0px 0px;
+.task {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding-block: 14px;
+  padding-left: 30px;
+  border-radius: 17px;
+  background: #252525;
+  box-shadow: 0px 12px 10px -3px rgba(0, 0, 0, 0.25);
+  
+  margin-block:15px 0px;
+   
 }
 
-#player h4{
-    color: #FFF;
-    font-family: SansSerif;
-    font-size: 26px;
-    font-style: normal;
-    font-weight: 300;
-    line-height: normal;
-    margin:34px;
+.task #pointsPlayer, .task h4 {
+  margin:0px;
+  color: #FFF;
+  font-family: SansSerif;
+  font-size: 26px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
 }
 
-#dealer h4{
-    margin-top: 0px;
-    color: #FFF;
-    font-family: SansSerif;
-    font-size: 26px;
-    font-style: normal;
-    font-weight: 300;
-    line-height: normal;
-    margin:34px;
+.cards_dealer, .cards_player {
+  width: 95%;
+  height: 100%;
+  background: #343434;
+  border-radius: 0px 0px 14px 14px;
+  display:flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
+
 
 #buttons {
-    
+    margin-left: 10px;
     display:flex;
     flex-direction: column;
-    margin-bottom: 74px;
-    margin-right: 70px;
-
     position: absolute;
     bottom: 0;
     right: 0;
+    margin-bottom: 7vh;
+    margin-right: 3vw;
+
     /* Add padding or other styles to create space between the buttons and the bottom/right edges */
   }
 
   button{
-    width: 206px;
-    height: 77px;
+    width: 10vw;
+    height: 9vh;
+    min-height: 50px;
     color: #FFF;
     background-color: transparent;
     border: white 3px solid;
     border-radius: 16px;
     font-family: Inter;
-    font-size: 36px;
+    font-size: 1.7vw;
     font-style: normal;
     font-weight: 400;
     line-height: normal;
@@ -101,23 +109,25 @@
 
   .overlay :hover {
     cursor: pointer;
-    border: 2px solid #FFF;
-}
+    padding: 100px;
+  }
   
   .overlay-text {
     font-family: sans-serif;
     font-size:20vh;
-    padding:1000px;
-  }
-
-  .cards_dealer, .cards_player {
-    display:flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
+    text-shadow: -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black;
   }
 
 
+  .card, .card-animate {
+    min-width: 100px;
+    width: 23vh; 
+    height: auto;
+    margin-left: -60px; /* Set the desired overlap between the cards */
+    transition: transform 0.2s ease; /* Optional: Add a transition for smooth animation */
+  } 
 
-  
+  /* Optional: Apply hover effect to make the top card stand out slightly */
+  .card-animate:hover {
+    transform: translateX(-5.5vh); /* Set the desired overlap between the top card and the card below */
+  }

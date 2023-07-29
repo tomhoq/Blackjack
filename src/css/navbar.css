@@ -12,6 +12,13 @@
     margin-right:14px;
     width: 45px;
     height: 45px;
+    transition: transform 5s ease; /* Optional: Add a transition for smooth animation */
+    transform-origin: center;
+}
+
+#logo:hover {
+    cursor: pointer;
+    transform:  rotate(800deg);
 }
 
 #nav-title {

@@ -6,21 +6,20 @@
 .vertical {
     display:flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
 }
 
-#logo {
-    width: 165px;
-    height: 150px;
+.logo {
+    width: 8%;
+    height: auto;
     margin:19px;
     margin-bottom:0px;
 }
 
 #title {
     margin:0px;
-    font-family: SansSerif;
-    font-size: 170px;
+    font-family: Inter;
+    font-size: 10vw;
     font-style: normal;
     font-weight: 700;
     line-height: normal;
@@ -28,7 +27,7 @@
 
 #subtitle{
     font-family: Inter;
-    font-size: 30px;
+    font-size: 2vw;
     font-style: normal;
     font-weight: 300;
     line-height: normal;
@@ -37,16 +36,17 @@
 
 #play {
     font-family: SansSerif;
-    font-size: 52px;
+    font-size: 3vw;
     font-style: normal;
     font-weight: 700;
     line-height: normal;
     border-radius: 26px;
     background: #D72626;
     padding-block: 15px;
-    padding-inline: 150px;
+    padding-inline: 8vw;
     border: none;
     text-decoration: none;
+    margin-top: 6vh;
 }
 
 #play:hover {
@@ -62,33 +62,58 @@
 }
 
 .horizontal {
-    padding:0px;
+    position: absolute;
+
     display: flex;
     flex-direction: row;
     justify-content: space-around;
     align-items: center;
     margin-bottom:0px;
     margin-top:15px;
+    margin: 0;
+    bottom: 1vh;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 #right {
+    width: 20vw;
     transform: scaleX(-1);
+    margin-left:40vw;
+}
+
+#left {
+    width: 20vw;
 }
 
 .made {
-    align-self: flex-end;
+    position: absolute;
     font-family: Inter;
     font-size: 20px;
     font-style: normal;
     font-weight: 600;
     line-height: 5px;
-    display:flex;
+    display: flex;
     flex-direction: column;
     align-items: center;
-}
+    bottom: 20px; /* Adjust the distance from the bottom as needed */
+    left: 50%; /* Position it at the horizontal center of its parent */
+    transform: translateX(-50%); /* Shift it horizontally to center it precisely */
+  }
 
-@media (max-width: 1520px) {
-    #title {
-        font-size: 20px;
+  #r {
+    position: absolute;
+    top:0;
+  }
+
+  @media (max-height: 641px) and (min-width: 1556px) {
+    #left, #right, .made {
+        display:none;
     }
-}
+  }
+ 
+  
+  
+  
+  
+  
