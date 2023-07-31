@@ -1,11 +1,25 @@
 import '../css/settings.css';
 
 export default function Settings(props){
-    const {togglePlayerPoints, showPlayerPoints} = props;
-    console.log(showPlayerPoints)
+    const {togglePlayerPoints, showPlayerPoints, 
+                toggleDealerPoints, showDealerPoints,
+                toggleHitSoft, hitSoft,
+                toggleRestartGameAutomatically, restartGameAutomatically,
+                toggleDarkMode, darkMode
+            } = props;
+            
     return (
         <div className="settings">
             <h1>Settings</h1>
+
+            <div className="option">
+                <p>Display dealer’s points:</p>
+                <label className="switch">
+                    <input onChange={toggleDealerPoints} checked={showDealerPoints} type="checkbox"/>
+                    <span className="slider"></span>
+                </label>
+            </div>
+            
             <div className="option">
                 <p>Display player’s points:</p>
                 <label className="switch">
@@ -15,17 +29,17 @@ export default function Settings(props){
             </div>
 
             <div className="option">
-                <p>Display dealer’s points:</p>
+                <p>Dealer hits on soft 17:</p>
                 <label className="switch">
-                    <input type="checkbox"/>
+                    <input onChange={toggleHitSoft} checked={hitSoft} type="checkbox"/>
                     <span className="slider"></span>
                 </label>
             </div>
-                
+
             <div className="option">
                 <p>Restart Game Automatically:</p>
                 <label className="switch">
-                    <input type="checkbox"/>
+                    <input onChange={toggleRestartGameAutomatically} checked={restartGameAutomatically} type="checkbox"/>
                     <span className="slider"></span>
                 </label>
             </div>
@@ -34,7 +48,7 @@ export default function Settings(props){
             <div className="option">
                 <p>Dark mode:</p>
                 <label className="switch">
-                    <input type="checkbox"/>
+                    <input onChange={toggleDarkMode} checked={darkMode} type="checkbox"/>
                     <span className="slider"></span>
                 </label>
             </div>

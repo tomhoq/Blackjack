@@ -16,16 +16,23 @@ export default function Game() {
   const [lost, setLost] = useState(false);
   const [draw, setDraw] = useState(false);
   const [points, setPoints] = useState(0); // State variable for points
+  const [dealerPoints, setDealerPoints] = useState(0); // State variable for points
   const [buttonClicked, setButtonClicked] = useState(false);
   const [busted, setBusted] = useState(false);
   const [stand, setStand] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
   /*Toggle settings*/
-  const [showPlayerPoints, setShowPlayerPoints] = useState(false);
-  const [showDealerPoints, setShowDealerPoints] = useState(false);
-  const [restartGameAutomatically, setRestartGameAutomatically] = useState(false);
-  const [darkMode, setDarkMode] = useState(true);
+  const initialShowPlayerPoints = localStorage.getItem("showPlayerPoints") === "true" || false;
+  const [showPlayerPoints, setShowPlayerPoints] = useState(initialShowPlayerPoints);
+  const initialShowDealerPoints = localStorage.getItem("showDealerPoints") === "true" || false;
+  const [showDealerPoints, setShowDealerPoints] = useState(initialShowDealerPoints);
+  const intialRestartGameAutomatically = localStorage.getItem("restartGameAutomatically") === "true" || false;
+  const [restartGameAutomatically, setRestartGameAutomatically] = useState(intialRestartGameAutomatically);
+  const initialHitSoft = localStorage.getItem("hitSoft") === "true" || false;
+  const [hitSoft, setHitSoft] = useState(initialHitSoft);
+  const initialDarkMode = localStorage.getItem("darkMode") === "true" || false;
+  const [darkMode, setDarkMode] = useState(initialDarkMode);
 
   function toggleSettings() {
     setShowSettings(prev => !prev);
@@ -33,6 +40,27 @@ export default function Game() {
 
   const togglePlayerPoints = (event) => {
     setShowPlayerPoints(event.target.checked);
+    localStorage.setItem("showPlayerPoints", event.target.checked.toString());
+  };
+
+  const toggleDealerPoints = (event) => {
+    setShowDealerPoints(event.target.checked);
+    localStorage.setItem("showDealerPoints", event.target.checked.toString());
+  };
+
+  const toggleHitSoft = (event) => {
+    setHitSoft(event.target.checked);
+    localStorage.setItem("hitSoft", event.target.checked.toString());
+  };
+
+  const toggleRestartGameAutomatically = (event) => {
+    setRestartGameAutomatically(event.target.checked);
+    localStorage.setItem("restartGameAutomatically", event.target.checked.toString());
+  };
+
+  const toggleDarkMode = (event) => {
+    setDarkMode(event.target.checked);
+    localStorage.setItem("darkMode", event.target.checked.toString());
   };
 
   /*OneTime creates deck*/
@@ -52,7 +80,6 @@ export default function Game() {
       }
     };
 
-    console.log('i fire once');
     fetchDeckAndAddCardDealer();
   }, [deck_id]);
 
@@ -61,12 +88,13 @@ export default function Game() {
     if (deck_id !== "") {
       fetch(`https://www.deckofcardsapi.com/api/deck/${deck_id}/draw/?count=2`)
         .then(res => res.json())
-        .then(card => {console.log("Pused 2 to dealer")
+        .then(card => {
           setCardsDealer(card.cards);
+          setDealerPoints(countCards([card.cards[1]]));
         });
         fetch(`https://www.deckofcardsapi.com/api/deck/${deck_id}/draw/?count=2`)
         .then(res => res.json())
-        .then(card => {console.log("Pused 2 to player");
+        .then(card => {
           setCardsPiled(card.cards);
         });
     }
@@ -76,14 +104,13 @@ export default function Game() {
   /*Counts points every time a card is added to pile deck */
   useEffect(() => {
     var c_points = 0;
-    c_points = countCards(cardsPiled);
+    c_points = countCards(cardsPiled)[0];
     setPoints(c_points);
   
     if (c_points === 21) 
       document.getElementById('hitButton').disabled = true;
 
     if (c_points > 21) {
-      console.log("disabling buttons ",c_points)
       document.getElementById('standButton').disabled = true;
       document.getElementById('hitButton').disabled = true;
       setTimeout(() => setBusted(true), 1240); // Corrected syntax of setTimeout
@@ -93,20 +120,21 @@ export default function Game() {
 
   /*Add card to dealer on stand*/
   useEffect(() => {
-    console.log("use effe add card dealer")
 
     if (stand === true && !busted) {
-
-      var points = countCards(cardsDealer);
+      var [points,got_A11] = countCards(cardsDealer);
       var cards = [...cardsDealer];
 
-      if (points < 17) {
-
+      setDealerPoints(points);
+      console.log("points dealer",points, got_A11)
+      if ((points === 17 && got_A11 && hitSoft) || points < 17) {
+        console.log("hitting dealer ", points)
+        
         if (deck.deck_id) {
           fetch(
             `https://www.deckofcardsapi.com/api/deck/${deck.deck_id}/draw/?count=1`
           ).then(res => res.json())
-          .then(card => {console.log("Pushing ",card);
+          .then(card => {
             cards.push(card)
             setTimeout(() => {
             setCardsDealer(prev => [...prev, ...card.cards]);}, 600);
@@ -115,7 +143,7 @@ export default function Game() {
         }
 
       } else { 
-        var points_player = countCards(cardsPiled);
+        var points_player = countCards(cardsPiled)[0];
 
         setTimeout(() => 
         {
@@ -130,6 +158,15 @@ export default function Game() {
       }
     };
   },[stand,cardsDealer]);
+
+  /*Restarts game automatically*/
+  useEffect(() => {        
+    if(restartGameAutomatically && (won || lost || draw || busted)){
+      setTimeout(() => {
+        restartGame();
+      }, 1000);
+    }
+  },[won,lost,draw,busted]);
   
 
   /*Fetches card from existing deck and pushes it to cardsPiled*/
@@ -152,8 +189,7 @@ export default function Game() {
   function countCards(cards){
     var c_points = 0;
     var got_A_11 = false;
-
-    if (cards.length === 0) return 0;
+    if (cards.length === 0) return [0,false];
 
     for (const card of cards) 
     {
@@ -179,14 +215,17 @@ export default function Game() {
 
     }
 
-    if (got_A_11 && c_points > 21) c_points -= 10;
+    if (got_A_11 && c_points > 21){
+      c_points -= 10;
+      got_A_11 = false;
+    }
 
-    return c_points;
+    return [c_points,got_A_11];
   }
  
   /*toggle stand*/
-  async function standPlay() {
-    if (stand !== true && !busted && !won && !lost && !draw) {
+  function standPlay() {
+    if (stand === false || busted || won || lost || draw) {
       setStand(true);
       document.getElementById('standButton').disabled = true;
       document.getElementById('hitButton').disabled = true;
@@ -205,6 +244,7 @@ export default function Game() {
     setLost(false);
     setDraw(false);
     setPoints(0); // State variable for points
+    setDealerPoints(0);
     setButtonClicked(false);
     setBusted(false);
     setStand(false);
@@ -213,8 +253,15 @@ export default function Game() {
 
   return (
     <>
-        <Navbar toggleSettings={toggleSettings} showPlayerPoints={showPlayerPoints} />
-        {showSettings && <Settings togglePlayerPoints={togglePlayerPoints} />}
+        <Navbar toggleSettings={toggleSettings} />
+        {showSettings && 
+          <Settings showPlayerPoints={showPlayerPoints} togglePlayerPoints={togglePlayerPoints} 
+                    showDealerPoints={showDealerPoints} toggleDealerPoints={toggleDealerPoints}
+                    hitSoft={hitSoft} toggleHitSoft={toggleHitSoft}
+                    restartGameAutomatically={restartGameAutomatically} toggleRestartGameAutomatically={toggleRestartGameAutomatically}
+                    darkMode={darkMode} toggleDarkMode={toggleDarkMode}/>
+        }
+
         {
           busted && <div onClick={draw||busted||won||lost ? restartGame : null}className="overlay">
                       <h1 className="overlay-text">Busted</h1>
@@ -237,11 +284,12 @@ export default function Game() {
         }
 
         <div id="game" onClick={draw||busted||won||lost ? restartGame : null} 
-                      style={{ filter: draw||busted||won||lost? 'blur(7px)' : 'none' }}>
+                      style={{ filter: draw||busted||won||lost? 'blur(px)' : 'none' }}>
 
           <div className="place">
             <div className="task">
               <h4>Dealer</h4>
+              {showDealerPoints && <h1 className="pointsPlayer">{dealerPoints}</h1>}
             </div>
             <div className="cards_dealer">
               {cardsDealer.length !== 0 && cardsDealer.map((card, index) => (
@@ -258,7 +306,7 @@ export default function Game() {
           <div className="place">
             <div className="task">
               <h4>You</h4>
-              {showPlayerPoints && <h1 id="pointsPlayer">Points: {points}</h1>}
+              {showPlayerPoints && <h1 className="pointsPlayer">{points}</h1>}
             </div>
             <div className="cards_player">
               {cardsPiled.length !== 0 && cardsPiled.map((card, index) => (
@@ -276,8 +324,8 @@ export default function Game() {
         
         {!draw && !busted && !won && !lost &&
         <div id="buttons" style={{ filter: busted ? 'blur(5px)' : 'none' }}>
-          <button id="hitButton" onClick={addCard}>Hit</button>
-          <button id="standButton" onClick={standPlay}>Stand</button>
+          <button id="hitButton" disabled={showSettings} onClick={addCard}>Hit</button>
+          <button id="standButton" disabled={showSettings} onClick={standPlay}>Stand</button>
         </div>
         }
     </>
