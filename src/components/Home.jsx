@@ -4,7 +4,10 @@ import '../css/home.css';
 import cards from "./../assets/cards.png";
 import logo from "./../assets/heart.png";
 
-export default function Home() {
+export default function Home(props) {
+    // Get the theme from the context
+    const { theme, toggleTheme } = props;
+
     const [windowResolution, setWindowResolution] = useState({
         width: window.innerWidth,
         height: window.innerHeight,
@@ -33,14 +36,18 @@ export default function Home() {
       }, []);
     
       return (
-        <div className="main">
+        <div id={theme}>
           <div className="vertical">
+            <div className="shadow">
+              <div className="ellipse" />
+            </div>
             <img className="logo" src={logo} />
             <h1 id="title">WACKJACK</h1>
             <h4 id="subtitle">The silly blackjack</h4>
             <Link to="/play" id="play">PLAY NOW</Link>
             <div className="white"></div>
           </div>
+          <div className="box"></div>
           <div className="horizontal">
             <img id="left" src={cards} />
             <img id="right" src={cards} />
@@ -50,8 +57,8 @@ export default function Home() {
             <a href="https://github.com/tomhoq" target="_blank">@tomhoq</a>
           </div>
     
-          {/* Display the window resolution */}
-          <p id="r">Window Resolution: {windowResolution.width}px x {windowResolution.height}px</p>
+          {/* Display the window resolution <p id="r">Window Resolution: {windowResolution.width}px x {windowResolution.height}px</p>*/}
+          
         </div>
       );
     }

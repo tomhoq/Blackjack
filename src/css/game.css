@@ -23,7 +23,7 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
+  width: 94%;
   padding-block: 14px;
   padding-inline: 1vw;
   border-radius: 17px;
@@ -51,7 +51,7 @@
 }
 
 .cards_dealer, .cards_player {
-  width: 95%;
+  width: 92%;
   height: 100%;
   background: #343434;
   border-radius: 0px 0px 14px 14px;
@@ -138,4 +138,14 @@
   /* Optional: Apply hover effect to make the top card stand out slightly */
   .card-animate:hover {
     transform: translateX(-5.5vh); /* Set the desired overlap between the top card and the card below */
+  }
+
+  #a {
+    position:absolute;
+    z-index: 1;
+    margin-left:-70px;
+    margin-top: 20px;
+    width:580px;
+    height:auto;
+    left:0px;
   }

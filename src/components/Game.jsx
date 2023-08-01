@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { useEffect } from 'react'
+import cards from "../assets/cartas.png"
 import Navbar from './Navbar';
 import Settings from './Settings';
 
 import "../css/game.css"
 import back from "../assets/back.png"
 
-export default function Game() {
+export default function Game(props) {
+  const {theme, toggleTheme} = props;
 
   const [deck, setDeck] = useState({});
   const [deck_id, setDeck_id] = useState("");
@@ -31,8 +33,9 @@ export default function Game() {
   const [restartGameAutomatically, setRestartGameAutomatically] = useState(intialRestartGameAutomatically);
   const initialHitSoft = localStorage.getItem("hitSoft") === "true" || false;
   const [hitSoft, setHitSoft] = useState(initialHitSoft);
-  const initialDarkMode = localStorage.getItem("darkMode") === "true" || false;
-  const [darkMode, setDarkMode] = useState(initialDarkMode);
+
+
+  
 
   function toggleSettings() {
     setShowSettings(prev => !prev);
@@ -56,11 +59,6 @@ export default function Game() {
   const toggleRestartGameAutomatically = (event) => {
     setRestartGameAutomatically(event.target.checked);
     localStorage.setItem("restartGameAutomatically", event.target.checked.toString());
-  };
-
-  const toggleDarkMode = (event) => {
-    setDarkMode(event.target.checked);
-    localStorage.setItem("darkMode", event.target.checked.toString());
   };
 
   /*OneTime creates deck*/
@@ -259,7 +257,7 @@ export default function Game() {
                     showDealerPoints={showDealerPoints} toggleDealerPoints={toggleDealerPoints}
                     hitSoft={hitSoft} toggleHitSoft={toggleHitSoft}
                     restartGameAutomatically={restartGameAutomatically} toggleRestartGameAutomatically={toggleRestartGameAutomatically}
-                    darkMode={darkMode} toggleDarkMode={toggleDarkMode}/>
+                    theme={theme} toggleTheme={toggleTheme}/>
         }
 
         {
@@ -302,7 +300,7 @@ export default function Game() {
                 ))}
             </div>
           </div>
-          
+          <img src={cards} id="a"/>
           <div className="place">
             <div className="task">
               <h4>You</h4>

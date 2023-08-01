@@ -5,7 +5,7 @@ export default function Settings(props){
                 toggleDealerPoints, showDealerPoints,
                 toggleHitSoft, hitSoft,
                 toggleRestartGameAutomatically, restartGameAutomatically,
-                toggleDarkMode, darkMode
+                toggleTheme, theme
             } = props;
             
     return (
@@ -48,7 +48,7 @@ export default function Settings(props){
             <div className="option">
                 <p>Dark mode:</p>
                 <label className="switch">
-                    <input onChange={toggleDarkMode} checked={darkMode} type="checkbox"/>
+                    <input id="themeCheckbox" onChange={toggleTheme} checked={theme === 'dark'} type="checkbox"/>
                     <span className="slider"></span>
                 </label>
             </div>
