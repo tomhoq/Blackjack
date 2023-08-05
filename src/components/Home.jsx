@@ -39,7 +39,6 @@ export default function Home(props) {
         <div id={theme}>
           <div className="vertical">
             <div className="shadow">
-              <div className="ellipse" />
             </div>
             <img className="logo" src={logo} />
             <h1 id="title">WACKJACK</h1>
@@ -47,7 +46,6 @@ export default function Home(props) {
             <Link to="/play" id="play">PLAY NOW</Link>
             <div className="white"></div>
           </div>
-          <div className="box"></div>
           <div className="horizontal">
             <img id="left" src={cards} />
             <img id="right" src={cards} />

@@ -250,82 +250,84 @@ export default function Game(props) {
 
 
   return (
-    <>
-        <Navbar toggleSettings={toggleSettings} />
-        {showSettings && 
-          <Settings showPlayerPoints={showPlayerPoints} togglePlayerPoints={togglePlayerPoints} 
-                    showDealerPoints={showDealerPoints} toggleDealerPoints={toggleDealerPoints}
-                    hitSoft={hitSoft} toggleHitSoft={toggleHitSoft}
-                    restartGameAutomatically={restartGameAutomatically} toggleRestartGameAutomatically={toggleRestartGameAutomatically}
-                    theme={theme} toggleTheme={toggleTheme}/>
-        }
+    <div className="body">
+      <div id={theme}>
+          <Navbar toggleSettings={toggleSettings} />
+          {showSettings && 
+            <Settings showPlayerPoints={showPlayerPoints} togglePlayerPoints={togglePlayerPoints} 
+                      showDealerPoints={showDealerPoints} toggleDealerPoints={toggleDealerPoints}
+                      hitSoft={hitSoft} toggleHitSoft={toggleHitSoft}
+                      restartGameAutomatically={restartGameAutomatically} toggleRestartGameAutomatically={toggleRestartGameAutomatically}
+                      theme={theme} toggleTheme={toggleTheme}/>
+          }
 
-        {
-          busted && <div onClick={draw||busted||won||lost ? restartGame : null}className="overlay">
-                      <h1 className="overlay-text">Busted</h1>
-                    </div>
-        }
-        {
-          won && <div onClick={draw||busted||won||lost ? restartGame : null} className="overlay">
-                      <h1 className="overlay-text">Won</h1>
-                    </div>
-        }
-        {
-          lost && <div onClick={draw||busted||won||lost ? restartGame : null} className="overlay">
-                      <h1 className="overlay-text">Lost</h1>
-                    </div>
-        }
-        {
-          draw && <div onClick={draw||busted||won||lost ? restartGame : null} className="overlay">
-                      <h1 className="overlay-text">Draw</h1>
-                    </div>
-        }
+          {
+            busted && <div onClick={draw||busted||won||lost ? restartGame : null}className="overlay">
+                        <h1 className="overlay-text">Busted</h1>
+                      </div>
+          }
+          {
+            won && <div onClick={draw||busted||won||lost ? restartGame : null} className="overlay">
+                        <h1 className="overlay-text">Won</h1>
+                      </div>
+          }
+          {
+            lost && <div onClick={draw||busted||won||lost ? restartGame : null} className="overlay">
+                        <h1 className="overlay-text">Lost</h1>
+                      </div>
+          }
+          {
+            draw && <div onClick={draw||busted||won||lost ? restartGame : null} className="overlay">
+                        <h1 className="overlay-text">Draw</h1>
+                      </div>
+          }
 
-        <div id="game" onClick={draw||busted||won||lost ? restartGame : null} 
-                      style={{ filter: draw||busted||won||lost? 'blur(px)' : 'none' }}>
+          <div id="game" onClick={draw||busted||won||lost ? restartGame : null} 
+                        style={{ filter: showSettings||draw||busted||won||lost? 'blur(7px)' : 'none' }}>
 
-          <div className="place">
-            <div className="task">
-              <h4>Dealer</h4>
-              {showDealerPoints && <h1 className="pointsPlayer">{dealerPoints}</h1>}
+            <div className="place">
+              <div className="task">
+                <h4>Dealer</h4>
+                {showDealerPoints && <h1 className="pointsPlayer">{dealerPoints}</h1>}
+              </div>
+              <div className="cards_dealer">
+                {cardsDealer.length !== 0 && cardsDealer.map((card, index) => (
+                    <img
+                      key={card.code}
+                      className="card"
+                      src= {stand===false && index === 0 ? back : card.image}
+                      alt={card.images.svg}
+                    />
+                  ))}
+              </div>
             </div>
-            <div className="cards_dealer">
-              {cardsDealer.length !== 0 && cardsDealer.map((card, index) => (
-                  <img
-                    key={card.code}
-                    className="card"
-                    src= {stand===false && index === 0 ? back : card.image}
-                    alt={card.images.svg}
-                  />
-                ))}
+            <img src={cards} id="foto"/>
+            <div className="place">
+              <div className="task">
+                <h4>You</h4>
+                {showPlayerPoints && <h1 className="pointsPlayer">{points}</h1>}
+              </div>
+              <div className="cards_player">
+                {cardsPiled.length !== 0 && cardsPiled.map((card, index) => (
+                    <img
+                      className="card-animate"
+                      key={card.code}
+                      src={card.image}
+                      alt={card.images.svg}
+                    />
+                  ))}
+              </div>
             </div>
+
           </div>
-          <img src={cards} id="a"/>
-          <div className="place">
-            <div className="task">
-              <h4>You</h4>
-              {showPlayerPoints && <h1 className="pointsPlayer">{points}</h1>}
-            </div>
-            <div className="cards_player">
-              {cardsPiled.length !== 0 && cardsPiled.map((card, index) => (
-                  <img
-                    className="card-animate"
-                    key={card.code}
-                    src={card.image}
-                    alt={card.images.svg}
-                  />
-                ))}
-            </div>
+          
+          {!draw && !busted && !won && !lost &&
+          <div id="buttons" style={{ filter: busted ? 'blur(5px)' : 'none' }}>
+            <button id="hitButton" disabled={showSettings} onClick={addCard}>Hit</button>
+            <button id="standButton" disabled={showSettings} onClick={standPlay}>Stand</button>
           </div>
-
-        </div>
-        
-        {!draw && !busted && !won && !lost &&
-        <div id="buttons" style={{ filter: busted ? 'blur(5px)' : 'none' }}>
-          <button id="hitButton" disabled={showSettings} onClick={addCard}>Hit</button>
-          <button id="standButton" disabled={showSettings} onClick={standPlay}>Stand</button>
-        </div>
-        }
-    </>
+          }
+      </div>
+    </div>
   )
 }

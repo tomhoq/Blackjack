@@ -1,3 +1,8 @@
+body {
+  overflow: hidden; /* Hide scrollbars */
+}
+
+
 #navbar{
     z-index:3;
 }
@@ -8,8 +13,13 @@
     align-items: center;
 }
 
+#light #game{
+  background:white;
+}
+
 .place {
-    min-width: 440px;
+    max-width:800px;
+    min-width: 700px;
     width: 70vw;
     height: 45vh;
     min-height: 250px;
@@ -32,6 +42,10 @@
   
   margin-block:15px 0px;
    
+}
+
+#light .task {
+  background-color: #989898;
 }
 
 .task .pointsPlayer, .task h4 {
@@ -59,6 +73,10 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
+}
+
+#light .cards_dealer, #light .cards_player {
+  background-color: #CFCFCF;
 }
 
 
@@ -128,7 +146,7 @@
 
 
   .card, .card-animate {
-    min-width: 100px;
+    min-width: 130px;
     width: 23vh; 
     height: auto;
     margin-left: -60px; /* Set the desired overlap between the cards */
@@ -137,7 +155,7 @@
 
   /* Optional: Apply hover effect to make the top card stand out slightly */
   .card-animate:hover {
-    transform: translateX(-5.5vh); /* Set the desired overlap between the top card and the card below */
+    transform: translateX(-6.5vh); /* Set the desired overlap between the top card and the card below */
   }
 
   #a {
