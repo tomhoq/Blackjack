@@ -4,10 +4,10 @@ import cards from "../assets/cartas.png"
 import Navbar from './Navbar';
 import Settings from './Settings';
 import Help from './Help'
+import {motion } from 'framer-motion';
 
 import "../css/game.css"
 import back from "../assets/back.png"
-import SlidingPane from "react-sliding-pane";
 
 export default function Game(props) {
   const {theme, toggleTheme} = props;
@@ -267,7 +267,8 @@ export default function Game(props) {
                       showDealerPoints={showDealerPoints} toggleDealerPoints={toggleDealerPoints}
                       hitSoft={hitSoft} toggleHitSoft={toggleHitSoft}
                       restartGameAutomatically={restartGameAutomatically} toggleRestartGameAutomatically={toggleRestartGameAutomatically}
-                      theme={theme} toggleTheme={toggleTheme}/>
+                      theme={theme} toggleTheme={toggleTheme}
+                      toggleSettings={toggleSettings} toggleHelp={toggleHelp} showHelp={showHelp}/>
           }
 
           {showHelp && <Help />}
@@ -334,8 +335,8 @@ export default function Game(props) {
           
           {!draw && !busted && !won && !lost &&
           <div id="buttons" style={{ filter: busted||draw||won||lost||showSettings||showHelp   ? 'blur(5px)' : 'none' }}>
-            <button id="hitButton" disabled={showSettings} onClick={addCard}>Hit</button>
-            <button id="standButton" disabled={showSettings} onClick={standPlay}>Stand</button>
+            <motion.button id="hitButton" disabled={showSettings||showHelp} onClick={addCard} whileHover={{scale:1.1}} whileTap={{ scale: 0.9,transition: { duration: 0.2 } }}>Hit</motion.button>
+            <motion.button id="standButton" disabled={showSettings||showHelp} onClick={standPlay} whileHover={{scale:1.1}} whileTap={{ scale: 0.9, transition: { duration: 0.2 } }}>Stand</motion.button>
           </div>
           }
       </div>

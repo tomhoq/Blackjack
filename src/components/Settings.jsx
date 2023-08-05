@@ -1,13 +1,16 @@
 import '../css/settings.css';
+import { motion } from 'framer-motion';
 
 export default function Settings(props){
     const {togglePlayerPoints, showPlayerPoints, 
                 toggleDealerPoints, showDealerPoints,
                 toggleHitSoft, hitSoft,
                 toggleRestartGameAutomatically, restartGameAutomatically,
-                toggleTheme, theme
+                toggleTheme, theme,
+                toggleSettings, toggleHelp, showHelp
             } = props;
-            
+    
+    if (showHelp) toggleHelp();
     return (
         <div id={`${theme}-settings`}>
             <div className="settings">
@@ -52,6 +55,15 @@ export default function Settings(props){
                         <input id="themeCheckbox" onChange={toggleTheme} checked={theme === 'dark'} type="checkbox"/>
                         <span className="slider"></span>
                     </label>
+                </div>
+
+                <div className="ok">
+                    <motion.button id="hitButton" 
+                                    onClick={toggleSettings} whileHover={{scale:1.1}} 
+                                    whileTap={{ scale: 0.9,transition: { duration: 0.2 } }}>
+                        Ok!
+                    </motion.button>
+
                 </div>
 
             </div>

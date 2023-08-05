@@ -1,18 +1,23 @@
-#text * {
-    color:white;
-    
-}
-.rules{
-    text-align: justify;
-}
-
 #text{
+    position: absolute;
+    width:100%;
     padding: 10px;
     background-color: #1C1B20;
     font-family: Inter;
     padding-left: 30px;
     padding-right: 30px;
 }
+
+
+#text * {
+    color:white;
+    
+}
+.rules{
+    text-align: justify;
+    margin-right:70px;
+}
+
 
 h1{
     margin-bottom: 2px;

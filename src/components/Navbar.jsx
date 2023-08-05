@@ -2,7 +2,7 @@ import '../css/navbar.css';
 import settings from "../assets/settings.png"
 import question from "../assets/question-mark.png"
 import { Link } from 'react-router-dom';
-
+import { motion } from 'framer-motion';
 
 export default function Navbar(props) {
   const {toggleSettings, toggleHelp } = props;
@@ -11,8 +11,12 @@ export default function Navbar(props) {
     <div id = "navbar">
       <Link id="nav-title" to="/" >WACKJACK</Link>
       <div className="items">
-        <img id="help" onClick={toggleHelp} src={question} />
-        <img id="logo" onClick={toggleSettings} src={settings} alt="logo" />
+        <motion.img id="help" onClick={toggleHelp} src={question} 
+          whileHover={{ rotate: 30, transition: { duration: 0.01, ease: 'linear'} }}
+          whileTap={{ scale: 0.5,transition: { duration: 0.2 } }}/>
+        <motion.img id="logo" onClick={toggleSettings} src={settings} alt="logo" 
+          whileHover={{ rotate: 50, transition: { duration: 0.002 }, ease: 'linear'}}
+          whileTap={{ scale: 0.5,transition: { duration: 0.2 } }}/>
       </div>
     </div >
   )

@@ -3,37 +3,13 @@ import { Link } from 'react-router-dom';
 import '../css/home.css';
 import cards from "./../assets/cards.png";
 import logo from "./../assets/heart.png";
+import {motion } from 'framer-motion';
 
 export default function Home(props) {
     // Get the theme from the context
     const { theme, toggleTheme } = props;
 
-    const [windowResolution, setWindowResolution] = useState({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    
-      // Function to update the window resolution
-      const updateWindowResolution = () => {
-        setWindowResolution({
-          width: window.innerWidth,
-          height: window.innerHeight,
-        });
-      };
-    
-      // useEffect to update the resolution on component mount and window resize
-      useEffect(() => {
-        updateWindowResolution(); // Initial update
-    
-        const handleResize = () => {
-          updateWindowResolution(); // Update on window resize
-        };
-    
-        window.addEventListener('resize', handleResize);
-        return () => {
-          window.removeEventListener('resize', handleResize); // Cleanup on unmount
-        };
-      }, []);
+
     
       return (
         <div id={theme}>
@@ -42,8 +18,11 @@ export default function Home(props) {
             </div>
             <img className="logo" src={logo} />
             <h1 id="title">WACKJACK</h1>
-            <h4 id="subtitle">The silly blackjack</h4>
-            <Link to="/play" id="play">PLAY NOW</Link>
+            <h4 id="subtitle">The simplified blackjack</h4>
+            <motion.div >
+
+              <Link to="/play" id="play">PLAY NOW</Link>
+            </motion.div>
             <div className="white"></div>
           </div>
           <div className="horizontal">
