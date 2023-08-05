@@ -16,6 +16,21 @@
     transform-origin: center;
 }
 
+#help {
+    filter: invert(100%);
+    margin:0px;
+    width: 45px;
+    height: 45px;
+    margin-right: 2vw;
+    transition: transform 0.3s ease; /* Optional: Add a transition for smooth animation */
+}
+
+#help:hover {
+    cursor: pointer;
+    transform:  rotate(20deg);
+
+}
+
 #logo:hover {
     cursor: pointer;
     transform:  rotate(80deg);

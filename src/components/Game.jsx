@@ -3,9 +3,11 @@ import { useEffect } from 'react'
 import cards from "../assets/cartas.png"
 import Navbar from './Navbar';
 import Settings from './Settings';
+import Help from './Help'
 
 import "../css/game.css"
 import back from "../assets/back.png"
+import SlidingPane from "react-sliding-pane";
 
 export default function Game(props) {
   const {theme, toggleTheme} = props;
@@ -23,6 +25,8 @@ export default function Game(props) {
   const [busted, setBusted] = useState(false);
   const [stand, setStand] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
+
 
   /*Toggle settings*/
   const initialShowPlayerPoints = localStorage.getItem("showPlayerPoints") === "true" || false;
@@ -39,6 +43,10 @@ export default function Game(props) {
 
   function toggleSettings() {
     setShowSettings(prev => !prev);
+  }
+
+  function toggleHelp() {
+    setShowHelp(prev => !prev);
   }
 
   const togglePlayerPoints = (event) => {
@@ -252,7 +260,8 @@ export default function Game(props) {
   return (
     <div className="body">
       <div id={theme}>
-          <Navbar toggleSettings={toggleSettings} />
+          <div className="shadows"></div>
+          <Navbar toggleSettings={toggleSettings} toggleHelp={toggleHelp} />
           {showSettings && 
             <Settings showPlayerPoints={showPlayerPoints} togglePlayerPoints={togglePlayerPoints} 
                       showDealerPoints={showDealerPoints} toggleDealerPoints={toggleDealerPoints}
@@ -260,6 +269,8 @@ export default function Game(props) {
                       restartGameAutomatically={restartGameAutomatically} toggleRestartGameAutomatically={toggleRestartGameAutomatically}
                       theme={theme} toggleTheme={toggleTheme}/>
           }
+
+          {showHelp && <Help />}
 
           {
             busted && <div onClick={draw||busted||won||lost ? restartGame : null}className="overlay">
@@ -283,7 +294,7 @@ export default function Game(props) {
           }
 
           <div id="game" onClick={draw||busted||won||lost ? restartGame : null} 
-                        style={{ filter: showSettings||draw||busted||won||lost? 'blur(7px)' : 'none' }}>
+                        style={{ filter: showHelp||showSettings||draw||busted||won||lost? 'blur(7px)' : 'none' }}>
 
             <div className="place">
               <div className="task">
@@ -322,7 +333,7 @@ export default function Game(props) {
           </div>
           
           {!draw && !busted && !won && !lost &&
-          <div id="buttons" style={{ filter: busted ? 'blur(5px)' : 'none' }}>
+          <div id="buttons" style={{ filter: busted||draw||won||lost||showSettings||showHelp   ? 'blur(5px)' : 'none' }}>
             <button id="hitButton" disabled={showSettings} onClick={addCard}>Hit</button>
             <button id="standButton" disabled={showSettings} onClick={standPlay}>Stand</button>
           </div>

@@ -29,7 +29,6 @@
     position: fixed;
     top: -52vh;
     width: 160vw;
-    /* Add other styles specific to the dark theme here */
 }
 
 #light .shadow{
@@ -154,6 +153,42 @@
   @media (max-height: 641px) and (min-width: 1556px) {
     #left, #right, .made {
         display:none;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .logo{
+        width: 20%;
+        margin-top:5vh;
+        margin-bottom: 5vh;
+    }
+
+    .shadow{
+        display: none;
+    }
+
+    #title{ 
+        font-size: 15vw;
+    }
+
+    #subtitle{
+        font-size: 5vw;
+    }
+
+    .white{
+        width: 10vw;
+        height: 2vh;
+    }
+
+    .horizontal{
+        display: none;
+    }
+
+
+    #play{
+        font-size: 5vw;
+        padding-block: 15px;
+        padding-inline: 10vw;
     }
   }
  
