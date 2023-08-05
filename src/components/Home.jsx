@@ -19,7 +19,7 @@ export default function Home(props) {
             <img className="logo" src={logo} />
             <h1 id="title">WACKJACK</h1>
             <h4 id="subtitle">The simplified blackjack</h4>
-            <motion.div >
+            <motion.div>
 
               <Link to="/play" id="play">PLAY NOW</Link>
             </motion.div>
