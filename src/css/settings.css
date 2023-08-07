@@ -10,6 +10,7 @@
 }
 
 .settings {
+  overflow-y: scroll;
   background: #3D3838;
   position: absolute;
   display: flex;
