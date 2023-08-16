@@ -13,10 +13,8 @@ export default function Navbar(props) {
       <div className="items">
         <motion.img id="help" onClick={toggleHelp} src={question} 
           whileHover={{ rotate: 30, transition: { duration: 0.01, ease: 'linear'} }}
-          whileTap={{ scale: 0.5,transition: { duration: 0.2 } }}/>
-        <motion.img id="logo" onClick={toggleSettings} src={settings} alt="logo" 
-          whileHover={{ rotate: 50, transition: { duration: 0.002 }, ease: 'linear'}}
-          whileTap={{ scale: 0.5,transition: { duration: 0.2 } }}/>
+          whileTap={{ scale: 0.5,transition: { duration: 0.2 }, ease: 'linear' }}/>
+        <img id="logo" onClick={toggleSettings} src={settings} alt="logo" />
       </div>
     </div >
   )

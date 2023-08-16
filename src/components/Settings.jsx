@@ -5,7 +5,6 @@ export default function Settings(props){
     const {togglePlayerPoints, showPlayerPoints, 
                 toggleDealerPoints, showDealerPoints,
                 toggleHitSoft, hitSoft,
-                toggleRestartGameAutomatically, restartGameAutomatically,
                 toggleTheme, theme,
                 toggleSettings, toggleHelp, showHelp
             } = props;
@@ -36,14 +35,6 @@ export default function Settings(props){
                     <p>Dealer hits on soft 17:</p>
                     <label className="switch">
                         <input onChange={toggleHitSoft} checked={hitSoft} type="checkbox"/>
-                        <span className="slider"></span>
-                    </label>
-                </div>
-
-                <div className="option">
-                    <p>Restart Game Automatically:</p>
-                    <label className="switch">
-                        <input onChange={toggleRestartGameAutomatically} checked={restartGameAutomatically} type="checkbox"/>
                         <span className="slider"></span>
                     </label>
                 </div>

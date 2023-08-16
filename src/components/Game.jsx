@@ -33,8 +33,6 @@ export default function Game(props) {
   const [showPlayerPoints, setShowPlayerPoints] = useState(initialShowPlayerPoints);
   const initialShowDealerPoints = localStorage.getItem("showDealerPoints") === "true" || false;
   const [showDealerPoints, setShowDealerPoints] = useState(initialShowDealerPoints);
-  const intialRestartGameAutomatically = localStorage.getItem("restartGameAutomatically") === "true" || false;
-  const [restartGameAutomatically, setRestartGameAutomatically] = useState(intialRestartGameAutomatically);
   const initialHitSoft = localStorage.getItem("hitSoft") === "true" || false;
   const [hitSoft, setHitSoft] = useState(initialHitSoft);
 
@@ -64,22 +62,16 @@ export default function Game(props) {
     localStorage.setItem("hitSoft", event.target.checked.toString());
   };
 
-  const toggleRestartGameAutomatically = (event) => {
-    setRestartGameAutomatically(event.target.checked);
-    localStorage.setItem("restartGameAutomatically", event.target.checked.toString());
-  };
-
   /*OneTime creates deck*/
   useEffect(function() {
     const fetchDeckAndAddCardDealer = async () => {
-      if (deck_id === "") {
+      if (!deck_id) {
         try {
           const data = await fetch("https://www.deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1");
           const json = await data.json();
           setDeck(json);
-          setTimeout(() => {
-            setDeck_id(json.deck_id);
-          }, 400);
+          setDeck_id(json.deck_id);
+
         } catch (error) {
           console.error("Error fetching deck:", error);
         }
@@ -87,24 +79,28 @@ export default function Game(props) {
     };
 
     fetchDeckAndAddCardDealer();
-  }, [deck_id]);
+  }, []);
 
   /*Onetime gives starting cards*/
   useEffect(() => {
-    if (deck_id !== "") {
-      fetch(`https://www.deckofcardsapi.com/api/deck/${deck_id}/draw/?count=2`)
-        .then(res => res.json())
-        .then(card => {
-          setCardsDealer(card.cards);
-          setDealerPoints(countCards([card.cards[1]]));
-        });
+    console.log("giving starting cards", stand, won, lost, draw, busted);
+    if (!(stand||won||lost||draw||busted)) {
+      console.log("giving ");
+      if (deck_id !== "") {
         fetch(`https://www.deckofcardsapi.com/api/deck/${deck_id}/draw/?count=2`)
-        .then(res => res.json())
-        .then(card => {
-          setCardsPiled(card.cards);
-        });
+          .then(res => res.json())
+          .then(card => {
+            setCardsDealer(card.cards);
+            setDealerPoints(countCards([card.cards[1]]));
+          });
+          fetch(`https://www.deckofcardsapi.com/api/deck/${deck_id}/draw/?count=2`)
+          .then(res => res.json())
+          .then(card => {
+            setCardsPiled(card.cards);
+          });
+      }
     }
-  },[deck_id]);
+  },[stand, busted, won, lost, draw, deck_id]);
 
 
   /*Counts points every time a card is added to pile deck */
@@ -132,13 +128,11 @@ export default function Game(props) {
       var cards = [...cardsDealer];
 
       setDealerPoints(points);
-      console.log("points dealer",points, got_A11)
       if ((points === 17 && got_A11 && hitSoft) || points < 17) {
-        console.log("hitting dealer ", points)
         
-        if (deck.deck_id) {
+        if (deck_id) {
           fetch(
-            `https://www.deckofcardsapi.com/api/deck/${deck.deck_id}/draw/?count=1`
+            `https://www.deckofcardsapi.com/api/deck/${deck_id}/draw/?count=1`
           ).then(res => res.json())
           .then(card => {
             cards.push(card)
@@ -163,32 +157,24 @@ export default function Game(props) {
         }, 1500);
       }
     };
-  },[stand,cardsDealer]);
-
-  /*Restarts game automatically*/
-  useEffect(() => {        
-    if(restartGameAutomatically && (won || lost || draw || busted)){
-      setTimeout(() => {
-        restartGame();
-      }, 1000);
-    }
-  },[won,lost,draw,busted]);
-  
+  },[stand,cardsDealer]);  
 
   /*Fetches card from existing deck and pushes it to cardsPiled*/
   function addCard() {
+    console.log("clicked hit", !buttonClicked, !busted, !stand);
     if(!buttonClicked && !busted && !stand){
       setButtonClicked(true);
-        if (deck.deck_id) {
-          fetch(`https://www.deckofcardsapi.com/api/deck/${deck.deck_id}/draw/?count=1`)
-            .then(res => res.json())
-            .then(card => {    
-              setCardsPiled(prev => [...prev, ...card.cards]);
-              setButtonClicked(false);
-            });
-        }
+      fetch(`https://www.deckofcardsapi.com/api/deck/${deck_id}/draw/?count=1`)
+        .then(res => res.json())
+        .then(card => {    
+          if (card)
+            setCardsPiled(prev => [...prev, ...card.cards]);
+          setButtonClicked(false);
+        });
     }
   }
+
+  console.log("buttonClicked", buttonClicked);
 
   /*Returns points in hand*/
  /* console.log("8,8,a,10",countCards([{code:"8S"},{code:"8D"},{code:"AS"}]))*/
@@ -233,6 +219,7 @@ export default function Game(props) {
   function standPlay() {
     if (stand === false || busted || won || lost || draw) {
       setStand(true);
+      console.log("disabling");
       document.getElementById('standButton').disabled = true;
       document.getElementById('hitButton').disabled = true;
 
@@ -243,7 +230,21 @@ export default function Game(props) {
   /*Reset variables*/
   function restartGame() {
     setDeck({});
-    setDeck_id("");
+
+    fetch(`https://www.deckofcardsapi.com/api/deck/${deck_id}/shuffle/`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        console.log("Deck shuffled successfully");
+        // Additional code for what to do after shuffling
+      } else {
+        console.log("Error shuffling deck");
+      }
+    })
+    .catch(error => {
+      console.error("An error occurred:", error);
+    });
+    
     setCardsPiled([]);
     setCardsDealer([]);
     setWon(false);
@@ -266,7 +267,6 @@ export default function Game(props) {
             <Settings showPlayerPoints={showPlayerPoints} togglePlayerPoints={togglePlayerPoints} 
                       showDealerPoints={showDealerPoints} toggleDealerPoints={toggleDealerPoints}
                       hitSoft={hitSoft} toggleHitSoft={toggleHitSoft}
-                      restartGameAutomatically={restartGameAutomatically} toggleRestartGameAutomatically={toggleRestartGameAutomatically}
                       theme={theme} toggleTheme={toggleTheme}
                       toggleSettings={toggleSettings} toggleHelp={toggleHelp} showHelp={showHelp}/>
           }
@@ -295,7 +295,7 @@ export default function Game(props) {
           }
 
           <div id="game" onClick={draw||busted||won||lost ? restartGame : null} 
-                        style={{ filter: showHelp||showSettings||draw||busted||won||lost? 'blur(7px)' : 'none' }}>
+                        style={{ filter: showHelp||showSettings? 'blur(7px)' : 'none' }}>
 
             <div className="place">
               <div className="task">
